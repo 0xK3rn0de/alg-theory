@@ -34,28 +34,31 @@ shops = {
 # }
 # Указать надо только по 2 магазина с минимальными ценами
 
-sweets = {
-    # TODO здесь ваш код
-    'печенье': [
-        {'shop': 'пятерочка', 'price': 9.99},
-        {'shop': 'ашан', 'price': 10.99},
-    ],
-    'конфеты': [
-        {'shop': 'магнит', 'price': 30.99},
-        {'shop': 'пятерочка', 'price': 32.99},
-    ],
-    'карамель': [
-        {'shop': 'магнит', 'price': 41.99},
-        {'shop': 'ашан', 'price': 45.99},
-    ],
-    'пирожное': [
-        {'shop': 'пятерочка', 'price': 59.99},
-        {'shop': 'магнит', 'price': 62.99},
-    ],
-}
+def build_sweets(shops, shops_number=2):
+    # Собираем по каждому продукту список магазинов с ценой
+    sweets = {}
+
+    for shop_name, shop_products in shops.items():
+        for product in shop_products:
+            offers = sweets.setdefault(product['name'], [])
+            offers.append({'shop': shop_name, 'price': product['price']})
+
+    # Сортируем предложения по цене и оставляем только самые дешёвые магазины
+    return {
+        product_name: sorted(offers, key=lambda offer: offer['price'])[:shops_number]
+        for product_name, offers in sweets.items()
+    }
+
+
+# Заполняем словарь цен на продукты
+sweets = build_sweets(shops)
+
 
 def run():
-    print(sweets)
+    # Каждый продукт выводим отдельной строкой:
+    #   печенье: [{'shop': 'пятерочка', 'price': 9.99}, {'shop': 'ашан', 'price': 10.99}]
+    for product_name, offers in sweets.items():
+        print(f'{product_name}: {offers}')
 
 
 if __name__ == '__main__':
